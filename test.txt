@@ -1,2 +1,3 @@
 test 2018-04-06
-insert AAAA
+insert AAA
+charge at 12:23 2018-04-06
