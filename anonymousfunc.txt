@@ -1,0 +1,115 @@
+Python返回函数、闭包，匿名函数
+函数不仅可以作为函数参数，还可以作为函数返回结果
+
+复制代码
+def pro1(c,f):
+     def pro2():
+        return f(c)
+    return pro2
+
+#调用pro1函数时，返回的是pro2函数对象
+>>>a = pro1(-3,abs)
+#需要对a调用才能得到结果
+>>>a()
+3
+复制代码
+如果在一个内部函数里对外部作用域（但不是全局作用域）的变量进行引用，内部函数称为闭包（closure）
+
+ 
+
+复制代码
+import math
+
+def fun1(n):
+    def fun2(x):
+        return pow(x,n)
+    return fun2
+
+pow2 = fun1(2)
+
+print(pow2(9))
+复制代码
+#函数fun2对fun1的参数n进行了引用，将带参数的fun1给一个新的函数pow2
+
+当fun1的生命周期结束时，已经引用的变量n存在在fun2中，依然可以调用
+
+复制代码
+#用闭包实现一个点与点之间的距离计算
+
+def point(x, y):
+    def get_distance(u, v):
+        return sqrt((x - u) ** 2 + (y - v) ** 2)
+ 
+    return get_distance
+ 
+>>> pt = point(7, 2)
+>>> pt(10, 6)
+5.0
+复制代码
+再看一个廖老师的例子
+
+复制代码
+def count():
+    fs = []
+    for i in range(1, 4):
+        def f():
+             return i*i
+        fs.append(f)
+    return fs
+
+f1, f2, f3 = count()
+复制代码
+如果你认为f1，f2，f3三个不同的函数分别返回1,4,9。那就错了
+
+因为返回函数使用了循环变量i，但是并没有立刻执行 等到函数全部返回后，i已经是3，得到的结果全部是9
+
+因此，我们应尽量避免在闭包中引用循环变量，或者后续会发生变化的变量。
+
+ 
+
+如果需要引用循环变量，增加一个函数，并且使用该函数的参数绑定循环变量当前的值。
+
+复制代码
+def count():
+    fs = []
+    for i in range(1,4):
+        def g(a):   #定义一个g函数，参数为a，返回函数f的返回值被绑定
+            f = lambda : a*a
+            return f
+        fs.append(g(i))
+    return fs
+
+f1,f2,f3 =count()
+
+print(f1())
+print(f2())
+print(f3())
+1
+4
+9
+复制代码
+ 
+
+ 
+
+匿名函数
+
+ 
+
+所谓匿名就是不需要函数表达式
+
+lambda x : x*x
+
+关键字lambda表示匿名函数，冒号前面的x表示函数参数。
+
+匿名函数有个限制，就是只能有一个表达式，不用写return，返回值就是该表达式的结果。
+
+复制代码
+#定义一个函数f，参数为a  返回a的平方
+这里将匿名函数赋值给变量f
+
+f = lambda a: a*a 
+
+>>>f(3)
+9
+复制代码
